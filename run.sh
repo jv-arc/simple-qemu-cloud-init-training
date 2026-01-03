@@ -68,6 +68,7 @@ open_in_new_terminal "${IMDS_COMMAND[@]}"
 
 # QEMU
 
+IMG_PATH="$ARTIFACTS_DIR/overlay.qcow2"
 echo "Using image path: $IMG_PATH"
 
 QEMU_COMMAND=(

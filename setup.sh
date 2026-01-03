@@ -47,14 +47,46 @@ then
 	exit 1
 fi
 
-IMAGE_NAME="downloaded_image.img"
-if [[ -n "$IMAGE_NAME" ]]
+IMAGE_PATH="$ARTIFACTS_DIR/downloaded_image.img"
+OVERLAY_PATH="$ARTIFACTS_DIR/overlay.qcow2"
+
+
+if [[ -f "$IMAGE_PATH" ]]
 then
-	download_image "$IMAGE_URL" "$ARTIFACTS_DIR" "$IMAGE_NAME"
+	echo "WARNING! image file already exists"
+	echo "Do you want to download it again? (y/*)"
+	read CHOICE
 else
-	download_image "$IMAGE_URL" "$ARTIFACTS_DIR"
+	CHOICE="y"
+
 fi
 
+if [[ "$CHOICE" == "y" ]]
+then
+	rm -f "$IMAGE_PATH"
+	wget -O "$IMAGE_PATH" "$IMAGE_URL"
+	WGET_PID=$!
+	wait $WGET_PID
+	echo "Download Completed"
+fi
 
+if [[ -f "$OVERLAY_PATH" ]]
+then
+	echo "WARNING! overlay file already exists"
+	echo "Do you want to create it again? (y/*)"
+	read CHOICE
+else
+	CHOICE="y"
+fi
 
+if [[ "$CHOICE" == "y" ]]
+then
+	BACKING_FORMAT=$(qemu-img info --output=json "$IMAGE_PATH" | jq -r '.format')
+	rm -f "$OVERLAY_PATH"
+	qemu-img create -f qcow2 -b "$IMAGE_PATH" -F "$BACKING_FORMAT" "$OVERLAY_PATH"
+fi
 
+echo ""
+echo ""
+echo ""
+echo "Setup finished"
