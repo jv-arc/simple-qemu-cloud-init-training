@@ -47,7 +47,7 @@ then
 	exit 1
 fi
 
-
+IMAGE_NAME="downloaded_image.img"
 if [[ -n "$IMAGE_NAME" ]]
 then
 	download_image "$IMAGE_URL" "$ARTIFACTS_DIR" "$IMAGE_NAME"
