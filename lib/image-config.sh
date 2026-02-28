@@ -21,3 +21,8 @@ download_image(){
 
 
 
+create_overlay() {
+	qemu-img create -f qcow2 -b "$1" -F raw "$2"
+}
+
+
